@@ -4,8 +4,7 @@ const express = require("express")
 const process = require("process") // not required but recommended by Node Docs
 const { ApolloServer, gql } = require("apollo-server-express") // ES6 object destructuring
 const db = require('./db')
-
-const { notes: NOTES } = require("./demo-data")  // ES6 name while destructuring objects
+const models = require("./models")
 
 // load environment variables from .env file into process.env
 require('dotenv').config()
@@ -37,19 +36,14 @@ const typeDefs = gql`
 const resolvers = {
     Query: {
         hello: () => "Hello, GraphQL API!", // implicit return
-        notes: () => NOTES,
-        note: (parent, args) => NOTES.find(note => note.id === args.id)
+        notes: async () => await models.Note.find(),
+        note: async (parent, args) => await models.Note.findById(args.id)
     },
     Mutation: {
-        newNote: (parent, args) => {
-            const note = {
-                id: NOTES.length + 1,
-                content: args.content,
-                author: "Noam Chomsky"
-            }
-            NOTES.push(note);
-            return note
-        }
+        newNote: async (parent, args) => await models.Note.create({
+            content: args.content,
+            author: "Omar Khayyam"
+        })
     }
 }
 
