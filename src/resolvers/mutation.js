@@ -90,5 +90,41 @@ module.exports = {
         } catch (err) {
             return false;
         }
+    },
+    toggleFavorite: async (parent, { id }, { models, user }) => {
+        if (!user) throw new AuthenticationError();
+        const note = await models.Note.findById(id);
+        const hasUser = note.favoritedBy.indexOf(user.id)
+        if (hasUser > -1) {
+            return await models.Note.findByIdAndUpdate(
+                id,
+                {
+                    $pull: {
+                        favoritedBy: mongoose.Types.ObjectId(user.id)
+                    },
+                    $inc: {
+                        favoriteCount: -1
+                    }
+                },
+                {
+                    new: true
+                }
+            )
+        } else {
+            return await models.Note.findByIdAndUpdate(
+                id,
+                {
+                    $push: {
+                        favoritedBy: mongoose.Types.ObjectId(user.id)
+                    },
+                    $inc: {
+                        favoriteCount: 1
+                    }
+                },
+                {
+                    new: true
+                }
+            )
+        }
     }
 }
