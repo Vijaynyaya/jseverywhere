@@ -3,6 +3,8 @@
 const express = require("express")
 const process = require("process") // not required but recommended by Node Docs
 const { ApolloServer } = require("apollo-server-express") // ES6 object destructuring
+const depthLimit = require("graphql-depth-limit");
+const { createComplexityLimitRule } = require("graphql-validation-complexity")
 const helmet = require("helmet")
 const cors = require("cors")
 const db = require('./db')
@@ -29,6 +31,7 @@ app.use(cors()) // allow CORS
 const server = new ApolloServer({ 
     typeDefs, 
     resolvers,
+    validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
     context: ({ req }) => {
         // get jwt from request headers
         const token = req.headers.authorization;
