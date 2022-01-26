@@ -7,6 +7,7 @@ const db = require('./db')
 const models = require("./models")
 const typeDefs = require("./schema")
 const resolvers = require("./resolvers")
+const { getUser } = require("./helpers")
 
 // load environment variables from .env file into process.env
 require('dotenv').config()
@@ -24,7 +25,12 @@ const app = express() // initialize expresss
 const server = new ApolloServer({ 
     typeDefs, 
     resolvers,
-    context: () => {
+    context: ({ req }) => {
+        // get jwt from request headers
+        const token = req.headers.authorization;
+        // try retrieving the user information
+        const user = getUser(token);
+        console.log(user)
         // add models to context which is available to resolvers as the third argument
         return { models }
     }
