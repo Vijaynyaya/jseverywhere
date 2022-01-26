@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken")
 const { AuthenticationError, ForbiddenError } = require("apollo-server-express")
 require("dotenv").config();
 
-const gravatar = require("../util/gravatar") // to generate a Gravatar image URL
+const gravatar = require("../util/gravatar"); // to generate a Gravatar image URL
+const mongoose = require("mongoose");
 
 // define resolver functions for mutations defined in GraphQl schema
 module.exports = {
@@ -49,10 +50,14 @@ module.exports = {
         return jwt.sign({ id: user._id }, process.env.JWT_SECRET)
 
     },
-    newNote: async (parent,{ content }, { models }) => await models.Note.create({
-        content,
-        author: "Omar Khayyam"
-    }),
+    newNote: async (parent, { content }, { models, user }) => {
+        if (!user) throw new AuthenticationError("You must be signed in to create a new note.")
+        
+        return await models.Note.create({
+            content,
+            author: mongoose.Types.ObjectId(user.id)
+        })
+    },
     updateNote: async (parent, { id, content }, { models }) => {
         return await models.Note.findOneAndUpdate(
             {
