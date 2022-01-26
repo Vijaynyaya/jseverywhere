@@ -3,14 +3,19 @@
 const express = require("express")
 const process = require("process") // not required but recommended by Node Docs
 const { ApolloServer, gql } = require("apollo-server-express") // ES6 object destructuring
+const db = require('./db')
 
 const { notes: NOTES } = require("./demo-data")  // ES6 name while destructuring objects
 
 // load environment variables from .env file into process.env
 require('dotenv').config()
 
-// get port from environment
-const port = process.env.PORT || 4000
+// get environment variables
+const port = process.env.PORT || 4000;
+const DB_HOST = process.env.DB_HOST;
+
+// connect to the database
+db.connect(DB_HOST)
 
 // define a schema, using GraphQl's Domain Specific Language(DSL) for schemas
 const typeDefs = gql`
