@@ -1,6 +1,6 @@
 // define resolver functions for queries defined in GraphQl schema
 module.exports = {
-    notes: async (parent, args, { models }) => await models.Note.find(),
+    notes: async (parent, args, { models }) => await models.Note.find().limit(100),
     note: async (parent, { id }, { models }) => await models.Note.findById(id),
     noteFeed: async (parent, { cursor }, { models }) => {
         // defaults
