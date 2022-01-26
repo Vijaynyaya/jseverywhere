@@ -3,6 +3,8 @@
 const express = require("express")
 const process = require("process") // not required but recommended by Node Docs
 const { ApolloServer } = require("apollo-server-express") // ES6 object destructuring
+const helmet = require("helmet")
+const cors = require("cors")
 const db = require('./db')
 const models = require("./models")
 const typeDefs = require("./schema")
@@ -20,6 +22,8 @@ const DB_HOST = process.env.DB_HOST;
 db.connect(DB_HOST)
 
 const app = express() // initialize expresss
+app.use(helmet()) // secure HTTP headers
+app.use(cors()) // allow CORS
 
 // setup Apollo's GraphQL server
 const server = new ApolloServer({ 
