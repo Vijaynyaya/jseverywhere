@@ -4,7 +4,7 @@ const express = require("express")
 const process = require("process") // not required but recommended by Node Docs
 const { ApolloServer, gql } = require("apollo-server-express") // ES6 object destructuring
 
-const { notes: NOTES, notes } = require("./demo-data")  // ES6 name while destructuring objects
+const { notes: NOTES } = require("./demo-data")  // ES6 name while destructuring objects
 
 // load environment variables from .env file into process.env
 require('dotenv').config()
